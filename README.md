@@ -5,14 +5,8 @@
 (https://forum.xda-developers.com/mi-9t/how-to/magisk-module-systemless-debloater-t4180083)
 
 ### Links [Source]
-(https://github.com/zgfg/SystemlessDebloater)
+(https://github.com/Magisk-Modules-Alt-Repo/SystemlessDebloater)
 
 ### Description
-Module debloates /system, /system_ext, /product, /vendor and /india apps by searching (at the time of module installation) and listing their paths to the Magisk Module Installer REPLACE variable. 
-Magisk then creates local system tree that will be (systemlessly) replaced into the /system at every (re)boot. 
-It can be used for any Android - just add/remove your unwanted stock app names to DebloatList var in /Download/SystemlessDebloaterList.sh script on Internal memory, (re)install the module and reboot. 
-Log will be saved to /Download/SystemlessDebloater.log also on Internal memory.
-Before debloating the apps, from Settings/Applications, Uninstall (updates) and Clear Data for them!
-
-Example for the input file /SystemlessDebloaterList.sh:
-DebloatList="EasterEgg CatchLog Traceur wps_lite"
+Select and debloat preinstalled system apps. Supported up to SAR, Dynamic partitions and A12. Module must be installed through Magisk app, not TWRP - read OP instructions in the XDA thread:
+https://github.com/Magisk-Modules-Alt-Repo/SystemlessDebloater
