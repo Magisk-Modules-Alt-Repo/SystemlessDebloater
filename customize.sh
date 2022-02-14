@@ -2,6 +2,7 @@
 
 # Installation script customize.sh for Magisk Module Systemless Debloater (REPLACE).
 # XDA thread: https://forum.xda-developers.com/mi-9t/how-to/magisk-module-systemless-debloater-t4180083
+# GitHub source: https://github.com/zgfg/SystemlessDebloater
 # Module debloates /system, /system_ext, /product, /vendor and /india apps by searching (at the time of module installation) and listing their paths to the Magisk Module Installer REPLACE variable. 
 # Magisk then creates local system tree that will be (systemlessly) overlaid into the /system at every (re)boot. 
 # It can be used for any Android - just add/remove your unwanted stock app names to /Download/SystemlessDebloaterList.sh script on Internal memory, (re)install the module and reboot.
@@ -19,7 +20,7 @@ MyFolder=/storage/emulated/0/Download
 # MyFolder=/sdcard/Download
 
 # Module's version
-MyVersion=v1.4.6
+MyVersion=v1.4.8
 
 # Log file
 LogFile=$MyFolder/SystemlessDebloater.log
@@ -45,6 +46,11 @@ if [ ! -z "$Prop" ] && [ "$Prop" ]
 then
 	LogLine=$LogLine' A/B'
 fi
+Prop=$(getprop ro.boot.slot_suffix)
+if [ ! -z "$Prop" ] && [ "$Prop" ]
+then
+	LogLine=$LogLine" ($Prop)"
+fi
 echo "$LogLine"
 echo "$LogLine" >> $LogFile
 LogLine=$(magisk -c)
@@ -61,7 +67,7 @@ DebloatList=""
 DebloatedList=""
 
 # Verbose logging 
-VerboseLog=""
+VerboseLog="true"
 
 # Searching for possible several instances of system apps for debloating  
 MultiDebloat="true"
