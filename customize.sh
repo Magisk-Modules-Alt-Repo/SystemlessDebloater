@@ -152,7 +152,7 @@ SarMountPointList="/system"$'\n'
 for Path in $NewList
 do
 	# Append to SarMountPointList
-	SarMountPointList="$SarMountPointList"$'\n'
+	SarMountPointList="$SarMountPointList$Path"$'\n'
 done
 
 # Search through packages to add potential mount points
