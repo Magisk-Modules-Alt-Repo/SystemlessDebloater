@@ -1,14 +1,9 @@
 #!/system/bin/sh
 
-# Installation script customize.sh for Magisk Module Systemless Debloater (REPLACE).
+# Magisk Module: Systemless Debloater v1.5.0
+# Copyright (c) zgfg @ xda, 2020-
 # XDA thread: https://forum.xda-developers.com/mi-9t/how-to/magisk-module-systemless-debloater-t4180083
 # GitHub source: https://github.com/zgfg/SystemlessDebloater
-# Module debloates /system, /system_ext, /product, /vendor and /india apps by searching (at the time of module installation) and listing their paths to the Magisk Module Installer REPLACE variable. 
-# Magisk then creates local system tree that will be (systemlessly) overlaid into the /system at every (re)boot. 
-# It can be used for any Android - just add/remove your unwanted Stock app names to /Download/SystemlessDebloaterList.sh script on Internal memory, (re)install the module and reboot.
-# Log will be saved to /Download/SystemlessDebloater.log also to Internal memory.
-# Before debloating the apps, from Settings/Applications, Uninstall (updates) and Clear Data for them!
-# Copyright (c) zgfg @ xda, 2020-2023
 
 if [ -z $BOOTMODE ] ||  [ "$BOOTMODE" != "true" ] 
 then
@@ -31,9 +26,9 @@ MyVersion=v1.5.0
 
 # Log file
 LogFile=$LogFolder/SystemlessDebloater.log
-PrintLine="Magisk Module Systemless Debloater (REPLACE) $MyVersion"
+PrintLine="Magisk Module: Systemless Debloater $MyVersion"
 echo "$PrintLine log file." > $LogFile
-echo 'Copyright (c) zgfg @ xda, 2020-2023' >> $LogFile
+echo 'Copyright (c) zgfg @ xda, 2020-' >> $LogFile
 echo "Installation time: $(date +%c)" >> $LogFile
 echo '' >> $LogFile
 
@@ -102,10 +97,10 @@ else
 	PrintLine='Input file not found, creating a template file!'																					   
 	echo "$PrintLine"
 	echo "$PrintLine" >> $LogFile
-	echo "# Input debloat list $DebloatListFile for Magisk Module Systemless Debloater (REPLACE) $MyVersion" > $DebloatListFile
+	echo "# Input debloat list $DebloatListFile for Magisk Module Systemless Debloater $MyVersion" > $DebloatListFile
 	echo '# Before debloating the apps, from Settings/Applications, Uninstall (updates) and Clear Data for them!' >> $DebloatListFile
 	echo "# Systemless Debloater log: $LogFile" >> $DebloatListFile
-	echo '# Copyright (c) zgfg @ xda, 2020-2023' >> $DebloatListFile
+	echo '# Copyright (c) zgfg @ xda, 2020-' >> $DebloatListFile
 	echo ' ' >> $DebloatListFile
 	echo '# Define a list of Stock apps for debloating:' >> $DebloatListFile
 	echo 'DebloatList=""' >> $DebloatListFile
@@ -279,9 +274,9 @@ echo '' >> $LogFile
 echo '#!/system/bin/sh' > $ServiceScript
 echo '' >> $ServiceScript
 
-echo "#Magisk Module Systemless Debloater (REPLACE) $MyVersion" >> $ServiceScript
-echo '#Copyright (c) zgfg @ xda, 2020-2023' >> $ServiceScript
-echo "#Installation time: $(date +%c)" >> $ServiceScript
+echo "# Magisk Module: Systemless Debloater $MyVersion" >> $ServiceScript
+echo '# Copyright (c) zgfg @ xda, 2020-' >> $ServiceScript
+echo "# Installation time: $(date +%c)" >> $ServiceScript
 echo '' >> $ServiceScript
 
 # Log file for service.sh

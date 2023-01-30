@@ -1,4 +1,4 @@
-# Systemless Debloater (REPLACE)
+# Systemless Debloater
 
 ### Description
 Select and systemlessly debloat preinstalled system apps. Supporting up to System As Root (SAR), Dynamic partitions and Android 13. Module must be installed through Magisk app, not TWRP - please read:
@@ -19,5 +19,5 @@ Select and systemlessly debloat preinstalled system apps. Supporting up to Syste
 ![GitHub Releases](https://img.shields.io/github/downloads/Magisk-Modules-Alt-Repo/SystemlessDebloater/latest/total?label=Downloads%20%28Latest%20Release%29&style=plastic)
 ![GitHub All Releases](https://img.shields.io/github/downloads/Magisk-Modules-Alt-Repo/SystemlessDebloater/total?label=Total%20Downloads%20%28All%20Releases%29&style=plastic)
 
-#### Copyright (c) zgfg @ xda, 2020-2023
+#### Copyright (c) zgfg @ xda, 2020-
 
