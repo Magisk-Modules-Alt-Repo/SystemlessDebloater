@@ -1,6 +1,6 @@
 #!/system/bin/sh
 
-# Magisk Module: Systemless Debloater v1.5.1
+# Magisk Module: Systemless Debloater v1.5.2
 # Copyright (c) zgfg @ xda, 2020-
 # Config file improvements provided by ipdev @ xda
 # XDA thread: https://forum.xda-developers.com/t/magisk-module-systemless-debloater.4180083
@@ -12,28 +12,28 @@ then
 fi
 
 
-# Magisk Module Installer variable
-REPLACE=""
+# Module's version
+MyVersion=v1.5.2
 
-# Module's folder
+# Download folder
 LogFolder=/storage/emulated/0/Download
-
 # Alternative path to Internal memory
 # LogFolder=/sdcard/Download
-
-# Module's version
-MyVersion=v1.5.1
-
 
 # Log file
 LogFile=$LogFolder/SystemlessDebloater.log
 echo "Magisk Module: Systemless Debloater $MyVersion log file." > $LogFile
 echo 'Copyright (c) zgfg @ xda, 2020-' >> $LogFile
 echo 'Config file improvements provided by ipdev @ xda' >> $LogFile
-echo "Installation time: $(date +%c)" >> $LogFile
+echo "Installation start time: $(date +%c)" >> $LogFile
 echo '' >> $LogFile
 
 # Log system info
+Prop=$(getprop ro.product.cpu.abi)
+if [ ! -z "$Prop" ] && [ "$Prop" ]
+then
+	echo "$Prop" | tee -a $LogFile
+fi
 Prop=$(getprop ro.build.version.release)
 PrintLine='Android '$Prop
 Prop=$(getprop ro.build.system_root_image)
@@ -56,6 +56,9 @@ echo $(magisk -c) | tee -a $LogFile
 echo '' >> $LogFile
 
 
+# Verbose logging
+VerboseLog="true"
+
 # Default SAR mount-points (SAR partitions to search for debloating)
 #SarMountPointList="/system product /vendor /system_ext /india /my_bigball"
 SarMountPointList=""
@@ -68,15 +71,16 @@ InvalidMountPointList="/data /framework"
 DebloatList=""
 DebloatedList=""
 
-# Verbose logging
-VerboseLog="true"
+# Simple example for DebloatList var for the input file SystemlessDebloaterList.sh:
+#DebloatList="EasterEgg CatchLog Traceur wps_lite"
 
 # Searching for possible several instances of Stock apps for debloating
 MultiDebloat="true"
-
-
-# Simple example for DebloatList var for the input file SystemlessDebloaterList.sh:
-#DebloatList="EasterEgg CatchLog Traceur wps_lite"
+,
+# toDo: Quick fix for Canary v25211 and newer Magisk versions
+# No more .replace file in the REPLACEd folders and next time previously debloated apps cannot be found in ReplacedAppList
+# Hence, force all debloating by mounting through service.sh
+ForceMountList="true"
 
 
 # Input and config files
@@ -140,6 +144,7 @@ rm -f $ExampleConfigFile
 
 echo "Verbose logging: $VerboseLog" >> $LogFile
 echo "Multiple search/debloat: $MultiDebloat" >> $LogFile
+echo "Force mounting by service.sh: $ForceMountList" >> $LogFile
 echo '' >> $LogFile
 
 
@@ -264,7 +269,7 @@ do
 done
 
 
-#Search for previously debloated Stock apps
+#Search for previously REPLACEd Stock apps
 ReplacedAppList=""
 for SarMountPoint in $SarMountPointList
 do
@@ -280,67 +285,15 @@ done
 #ReplacedAppList=$(echo "$ReplacedAppList" | sort -bu )
 
 # Log ReplacedAppList
-echo "Previously debloated Stock apps:"$'\n'"$ReplacedAppList" >> $LogFile
-
-
-# Prepare service.sh file to debloat Stock but not System apps
-ServiceScript="$MODPATH/service.sh"
-echo "ServiceScript: $ServiceScript" >> $LogFile
-echo '' >> $LogFile
-
-echo '#!/system/bin/sh' > $ServiceScript
-echo '' >> $ServiceScript
-
-echo "# Magisk Module: Systemless Debloater $MyVersion" >> $ServiceScript
-echo '# Copyright (c) zgfg @ xda, 2020-' >> $ServiceScript
-echo "# Installation time: $(date +%c)" >> $ServiceScript
-echo '' >> $ServiceScript
-
-# Log file for service.sh
-echo 'ServiceLogFolder=/data/local/tmp' >> $ServiceScript
-echo 'ServiceLogFile=$ServiceLogFolder/SystemlessDebloater-service.log' >> $ServiceScript
-echo '' >> $ServiceScript
-
 if [ ! -z "$VerboseLog" ] && [ "$VerboseLog" = "true" ]
 then
-	echo 'echo "Execution time: $(date +%c)" > $ServiceLogFile' >> $ServiceScript
-	echo 'echo "" >> $ServiceLogFile' >> $ServiceScript
-else
-	echo 'rm -f $ServiceLogFile' >> $ServiceScript
-fi
-echo '' >> $ServiceScript
-
-# Module's own folder
-MODDIR=$(echo "$MODPATH" | sed "s!/modules_update/!/modules/!")
-echo "MODDIR=$MODDIR" >> $ServiceScript
-
-
-if [ ! -z "$VerboseLog" ] && [ "$VerboseLog" = "true" ]
-then
-	echo 'echo "MODDIR: $MODDIR" >> $ServiceLogFile' >> $ServiceScript
-	echo 'echo "" >> $ServiceLogFile' >> $ServiceScript
-	echo '' >> $ServiceScript
+	echo "Previously REPLACEd Stock apps:"$'\n'"$ReplacedAppList" >> $LogFile
 fi
 
-# Dummy apk used for debloating
-echo 'DummyApk=$MODDIR/dummy.apk' >> $ServiceScript
-echo 'touch $DummyApk' >> $ServiceScript
-echo '' >> $ServiceScript
 
-if [ ! -z "$VerboseLog" ] && [ "$VerboseLog" = "true" ]
-then
-	echo 'echo "DummyApk: $DummyApk" >> $ServiceLogFile' >> $ServiceScript
-	echo 'echo "" >> $ServiceLogFile' >> $ServiceScript
-	echo '' >> $ServiceScript
-fi
-
-# Mount and bind for debloating
-echo 'MountBind="mount -o bind"' >> $ServiceScript
-echo '' >> $ServiceScript
-
-# List of apps to debloat by mounting
+# List of apps to debloat by REPLACE and by mounting
+REPLACE=""
 MountList=""
-
 
 # Iterate through apps for debloating
 echo 'Debloating:' >> $LogFile
@@ -348,32 +301,29 @@ for AppName in $DebloatList
 do
 	AppFound=""
 
-	#Search through previously debloated Stock apps
+	#Search through previously REPLACEd Stock apps
 	SearchName=/"$AppName"/.replace
 	SearchList=$(echo "$ReplacedAppList" | grep "$SearchName$")
 	for FilePath in $SearchList
 	do
 		# Break if app already found
-		if [ -z "$MultiDebloat" ] && [ "$MultiDebloat" = "true" ]
+		if [ "$AppFound" = "true" ] && [ "$MultiDebloat" != "true" ]
 		then
-			if [ ! -z "$AppFound" ]
-			then
-				break
-			fi
+e			break
 		fi
 
 		# Remove /filename from the end of the path
 		FileName=${FilePath##*/}
 		FolderPath=$(echo "$FilePath" | sed "s,/$FileName$,,")
 
-		if [ ! -z "FolderPath" ]
+		if [ ! -z "$FolderPath" ]
 		then
 			AppFound="true"
 
 			# Log the full path
 			echo "found: $FilePath" >> $LogFile
 
-			if [ -z $(echo "$FolderPath" | grep '^/system/') ]
+			if [ "$ForceMountList" = "true" ] || [ -z $(echo "$FolderPath" | grep '^/system/') ]
 			then
 				# Append to MountList with appended AppName
 				MountList="$MountList$FolderPath/$AppName.apk"$'\n'
@@ -392,12 +342,10 @@ do
 	SearchList=$(echo "$StockAppList" | grep "$SearchName$")
 	for FilePath in $SearchList
 	do
-		if [ -z "$MultiDebloat" ] && [ "$MultiDebloatt" = "true" ]
+		# Break if app already found
+		if [ "$AppFound" = "true" ] && [ "$MultiDebloat" != "true" ]
 		then
-			if [ ! -z "$AppFound" ]
-			then
-				break
-			fi
+			break
 		fi
 
 		# Find the corresponding package
@@ -415,14 +363,14 @@ do
 		FileName=${FilePath##*/}
 		FolderPath=$(echo "$FilePath" | sed "s,/$FileName$,,")
 
-		if [ ! -z "FolderPath" ]
+		if [ ! -z "$FolderPath" ]
 		then
 			AppFound="true"
 
 			# Log the full path and package name
 			echo "found: $FilePath $PackageName" >> $LogFile
 
-			if [ -z $(echo "$FolderPath" | grep '^/system/') ]
+			if [ "$ForceMountList" = "true" ] || [ -z $(echo "$FolderPath" | grep '^/system/') ]
 			then
 				# Append to MountList
 				MountList="$MountList$FilePath"$'\n'
@@ -444,7 +392,7 @@ do
 done
 echo '' >> $LogFile
 
-if [ -z "$REPLACE" ]
+if [ -z "$REPLACE" ] && [ -z "$MountList"]
 then
 	echo 'No app for debloating found!' | tee -a $LogFile
 	echo 'Make sure to uninstall updates and clear data for apps you want to debloat!' | tee -a $LogFile
@@ -458,20 +406,25 @@ echo '' >> $LogFile
 
 # Sort and log REPLACE list
 REPLACE=$(echo "$REPLACE" | sort -bu )
-echo 'REPLACE="'"$REPLACE"$'\n"' >> $LogFile
+if [ "$ForceMountList" != "true" ]
+then
+	echo 'REPLACE="'"$REPLACE"$'\n"' >> $LogFile
 echo '' >> $LogFile
+fi
 
 # Sort and log MountList
 MountList=$(echo "$MountList" | sort -bu )
 echo 'MountList="'"$MountList"$'\n"' >> $LogFile
 echo '' >> $LogFile
 
-# Debloat by mounting in servise.sh
-for MountApk in $MountList
-do
-	PrintLine='$MountBind $DummyApk '"$MountApk"
-	echo "$PrintLine" >> $ServiceScript
-done
+# Prepare for debloating/mounting through servise.sh and mountList.sh
+MountListFile="$MODPATH/mountList.sh"
+echo 'MountList="'"$MountList"$'\n"' >> $MountListFile
+
+# Log the MountListFile path
+MountListFile=$(echo "$MountListFile" | sed "s!/modules_update/!/modules/!")
+echo "MountListFile:"$'\n'"$MountListFile" >> $LogFile
+echo '' >> $LogFile
 
 
 # Log Stock apps and packages
@@ -479,8 +432,9 @@ if [ ! -z "$VerboseLog" ] && [ "$VerboseLog" = "true" ]
 then
 	echo "Stock apps:"$'\n'"$StockAppList" >> $LogFile
 	echo "Stock packages: $PackageInfoList" >> $LogFile
+echo '' >> $LogFile
 fi
 
-
-# Note for the log file
+# Log installation end time and note for the log file
+echo "Installation end time: $(date +%c)" >> $LogFile
 echo "Systemless Debloater log: $LogFile"
