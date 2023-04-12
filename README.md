@@ -10,9 +10,6 @@ Select and systemlessly debloat preinstalled system apps. Supporting up to **Sys
 - [Wiki pages](https://github.com/mModule/guide_sDebloater/wiki/ConfigScript) by [ipdev](https://github.com/ipdev99/) @ XDA with instructions for `SystemlessDebloater.cfg`
 - His [Examples](https://github.com/mModule/guide_sDebloater/wiki/CommunityList) of apps that can be debloated (**Android**, **Google**, **Oppo**, **Samsung**, **Xiaomi**, **LineageOS**)
 
-### Coffee
-If this module is useful for you, please support development by donating a [coffee](https://zgfg.github.io/PayPal.html)
-
 #### Source
 
 [My Repo:](https://github.com/zgfg/SystemlessDebloater)
@@ -28,4 +25,7 @@ If this module is useful for you, please support development by donating a [coff
 ![GitHub All Releases](https://img.shields.io/github/downloads/Magisk-Modules-Alt-Repo/SystemlessDebloater/total?label=Total%20Downloads%20%28All%20Releases%29&style=plastic)
 
 #### Copyright (c) zgfg @ xda, 2020-
-
+<p align="left">
+</a> <a href="https://github.com/zgfg/SystemlessDebloater/blob/bd4261023da570ec224a613769412111e31467e9/LICENSE"> <img src="https://img.shields.io/github/license/zgfg/SystemlessDebloater?label=License&logo=gnu" alt="GNU General Public License"></a>
+<a href="https://zgfg.github.io/PayPal.html"> <img src="https://img.shields.io/badge/-Donate%20a%20coffee-FFDD00?logo=Buy-me-a-coffee&logoColor=black" alt="Donate a coffee"> </a> 
+</p>
