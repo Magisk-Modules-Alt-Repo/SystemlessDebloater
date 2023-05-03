@@ -1,8 +1,7 @@
 #!/system/bin/sh
 
-# Magisk Module: Systemless Debloater v1.5.2
+# Magisk Module: Systemless Debloater v1.5.3
 # Copyright (c) zgfg @ xda, 2020-
-
 
 # Module's own path (local path)
 MODDIR=${0%/*}
